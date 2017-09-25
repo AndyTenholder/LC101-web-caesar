@@ -25,20 +25,27 @@ form = """
         </style>
     </head>
     <body>
-        <form action="/" method="post">
+        <form action="/" method="get">
             <label for="rotation">Rotate by:</label>
             <input id="rotation" type="text" name="rot" value="0"/>
             <textarea id="text_to_encrypt" name="text" rows="10" cols="50">{0}</textarea>
-            <input type="submit" />
+            <input type="submit" value ="encrypt using GET"/>
+            <input type="submit" formmethod="post" formaction="/" value='encrypt using POST'/>
         </form>
     </body>
 
 </html>
 """
 
-@app.route("/")
+@app.route("/", methods=['GET'])
 def index():
-    return form.format("")
+    encrypted_message = ""
+    if 'text' in request.args and 'rot' in request.args:
+        rot = request.args.get('rot')
+        rot = int(rot)
+        message = request.args.get('text')
+        encrypted_message = rot13(message,rot)
+    return form.format(encrypted_message)
 
 @app.route("/" , methods=['POST'])
 def encrypt():
